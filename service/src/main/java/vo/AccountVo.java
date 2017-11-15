@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.ingenico.vo;
+package vo;
 
 import java.io.Serializable;
 
@@ -14,7 +14,7 @@ import lombok.Data;
  *
  */
 @Data
-public class Account implements Serializable {
+public class AccountVo implements Serializable {
     /**
      * 
      */
