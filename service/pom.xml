@@ -19,11 +19,6 @@
    <scope>test</scope>
   </dependency>
   <dependency>
-   <groupId>org.ingenico</groupId>
-   <artifactId>vo</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
-  </dependency>
-  <dependency>
    <groupId>org.projectlombok</groupId>
    <artifactId>lombok</artifactId>
    <version>1.16.18</version>
