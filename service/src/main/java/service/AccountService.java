@@ -4,6 +4,7 @@
 package service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,9 @@ public class AccountService {
 
     @Autowired
     private AccountDao accountDao;
+    
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     
     /**
      * 
@@ -60,7 +64,7 @@ public class AccountService {
             return new ApiResponse("FAILURE");
         }
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
-        destinationAccount.setBalance(destinationAccount.getBalance() + amount );
+        destinationAccount.setBalance(sourceAccount.getBalance() + amount);
         accountDao.save(sourceAccount);
         accountDao.save(destinationAccount);
         return new ApiResponse("SUCCESS");
