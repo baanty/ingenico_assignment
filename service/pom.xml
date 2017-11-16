@@ -115,7 +115,6 @@ https://mvnrepository.com/artifact/org.springframework/spring-webmvc
     <artifactId>spring-data-jpa</artifactId>
     <!-- <version>2.0.1.RELEASE</version> -->
     <version>1.10.8.RELEASE</version>
-    <scope>provided</scope>
 </dependency>
 
 
