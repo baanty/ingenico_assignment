@@ -2,10 +2,10 @@ package config;
 
 import java.util.Properties;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,9 +15,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -36,31 +38,6 @@ import service.AccountService;
 @EnableTransactionManagement
 public class AppConfiguration {
 
-    @Value("${db.driver}")
-    private String driverClassName;
-    
-    @Value("${db.url}")
-    private String dbUrl;
-    
-    @Value("${db.username}")
-    private String dbUserId;
-    
-    @Value("${db.password}")
-    private String dbPassword;
-    
-    @Value("${hibernate.dialect}")
-    private String dialect;
-    
-    @Value("${hibernate.hbm2ddl.auto}")
-    private String hbm2ddlAuto;
-    
-    @Value("${hibernate.show_sql}")
-    private String showSql;
-    
-    @Value("${hibernate.format_sql}")
-    private String formatSql;
-    
-    
     @Autowired
     private Environment environement;
     
@@ -68,10 +45,10 @@ public class AppConfiguration {
     @Bean
     DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(dbUrl);
-        dataSource.setUsername(dbUserId);
-        dataSource.setPassword(dbPassword);
+        dataSource.setDriverClassName(environement.getProperty("db.driver"));
+        dataSource.setUrl(environement.getProperty("db.url"));
+        dataSource.setUsername(environement.getProperty("db.username"));
+        dataSource.setPassword(environement.getProperty("db.password"));
         return dataSource;
     }
     
@@ -84,15 +61,24 @@ public class AppConfiguration {
     
     @Bean(name={"entityManagerFactory"})
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-       LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-       em.setDataSource(dataSource());
-       em.setPackagesToScan(new String[] { "entity" });
+       LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+       entityManagerFactory.setDataSource(dataSource());
+       entityManagerFactory.setPackagesToScan(new String[] { "entity" });
   
        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-       em.setJpaVendorAdapter(vendorAdapter);
-       em.setJpaProperties(additionalProperties());
+       entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
+       entityManagerFactory.setJpaProperties(additionalProperties());
   
-       return em;
+       return entityManagerFactory;
+    }
+    
+    
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory){
+       JpaTransactionManager transactionManager = new JpaTransactionManager();
+       transactionManager.setEntityManagerFactory(entityManagerFactory);
+  
+       return transactionManager;
     }
     
     
